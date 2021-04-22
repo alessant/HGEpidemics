@@ -1,0 +1,13 @@
+name = "HGEpidemics"
+uuid = "1dc26d5f-a7ec-4f77-a70e-d757be5372f6"
+authors = ["Alessia Antelmi <aless.antelmi@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
+JSONTables = "b9914132-a727-11e9-1322-f18e41205b0b"
+PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
+SimpleHypergraphs = "aa4a32ff-dd5d-5357-90e3-e7a9512f0501"

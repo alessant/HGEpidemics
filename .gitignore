@@ -1,0 +1,5 @@
+data/
+.vscode
+Manifest.toml
+*.csv
+csv/
