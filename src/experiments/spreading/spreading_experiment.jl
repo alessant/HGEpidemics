@@ -1,14 +1,19 @@
+using Pkg
+Pkg.activate(".")
+
 using HGEpidemics
 
 using CSV
 using DataFrames
 using Dates
+using JSON
 using JSON3
 using JSONTables
 using PyPlot
 using Statistics
 
 """
+
     Experiments on a spreading process
     via Time-Varying Hypergraphs
     using the Susceptible-Infected-Susceptible epidemic model. 
@@ -19,25 +24,15 @@ using Statistics
 ############################
 # Loading simulation params
 ############################
-project_path = dirname(pathof(HGEpidemics))
+#TODO as argsparam
+path = "/mnt/e/github/code/HGEpidemics/src/experiments/spreading/BLE/configs/ble_params.json"
+input_data = JSON.parse((open(path, "r")))
 
-# FOURSQUARE
-output_path = joinpath(project_path, "experiments", "spreading", "AAMAS20", "results")
+output_path = input_data["output_path"]
+fdata_params = input_data["data_params"]
+fparams = input_data["sim_params"]
 
-# Simulation parameters
-# Section 5.3 - Direct vs Indirect contagions
-fparams =
-    joinpath(project_path, "experiments", "spreading", "AAMAS20", "configs", "53", "aamas53.json")
-
-fdata_params =
-    joinpath(project_path, "experiments", "spreading", "AAMAS20", "configs", "foursquare.json")
-
-
-# Section 5.4 - Modeling the effect of time
-fparams =
-    joinpath(project_path, "experiments", "spreading", "AAMAS20", "configs", "54", "aamas54.json")
-
-
+#project_path = dirname(pathof(HGEpidemics))
 
 jtable = jsontable(read(open(fparams, "r")))
 paramsdf = DataFrame(jtable)
@@ -82,7 +77,7 @@ intervals_data = Dict{String, Dict{Symbol, Any}}()
 # println(data_params.dataset)
 
 for i in eachrow(intervals)
-    df, intervals, user2vertex, loc2he =
+    df, _intervals, user2vertex, loc2he =
         generate_model_data(
             data_params.dataset,
             header,
@@ -99,7 +94,7 @@ for i in eachrow(intervals)
     push!(
         get!(intervals_data, "$(i.Δ)$(i.δ)", Dict{Symbol, Any}()),
         :df => df,
-        :intervals => intervals,
+        :intervals => _intervals,
         :user2vertex => user2vertex,
         :loc2he => loc2he,
     )
@@ -127,6 +122,9 @@ for p in eachrow(per_infected)
             vstatus[i] = 0
         end
     end
+
+    vstatus = fill(0, length(users))
+    vstatus[1] = 1
 
     push!(
         per_infected_data,
@@ -204,7 +202,7 @@ for test_type in keys(simulation_data)
     figure(figsize=(7,4))
 
     for exp in get!(simulation_data, test_type, Array{Float64, 1}())
-        ylim(bottom=0.0, top=0.6)
+        ylim(bottom=0.0, top=1.0)
         plot(exp.second.infected_distribution, linestyle=linestyles[linestyle], marker=markers[marker], markevery=10, markersize=6.5)
 
         xlabel("Time intervals", fontweight="semibold", labelpad=10, fontsize="x-large")

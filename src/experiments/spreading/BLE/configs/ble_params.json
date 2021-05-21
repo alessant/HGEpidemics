@@ -1,0 +1,5 @@
+{
+    "data_params":"/mnt/e/github/code/HGEpidemics/src/experiments/spreading/BLE/configs/data_params.json",
+    "sim_params":"/mnt/e/github/code/HGEpidemics/src/experiments/spreading/BLE/configs/test.json",
+    "output_path":"/mnt/e/github/code/HGEpidemics/src/experiments/spreading/BLE/results"
+}
