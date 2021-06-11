@@ -131,6 +131,8 @@ function simulate(
 
     βₗ = haskey(kwargs, :βₗ) ? kwargs[:βₗ] : 0
     sanitize = haskey(kwargs, :sanitize) ? kwargs[:sanitize] : nothing
+    sanification_intervals = haskey(kwargs, :sanification_intervals) ? kwargs[:sanification_intervals] : Array{Int, 1}()
+    # println(sanification_intervals)
 
     intervention_start = haskey(kwargs, :intervention_start) ? kwargs[:intervention_start] : length(intervals) + 1
 
@@ -526,7 +528,7 @@ function simulate(
 
                                     # v and u have met 
                                     # after the application of an intervention
-                                    if t >= intervention_start
+                                    if t > intervention_start
                                         agents_met[v, u.first] = 1
                                     end
 
@@ -595,11 +597,16 @@ function simulate(
 
                     for he in gethyperedges(h, v)
                         #! same as phase 1
+                        # if the location is closed
+                        # I cannot checking in 
                         ihestatus[he.first] == 1 && lockdown && continue
+                        # if the agent is in isolation
+                        # or in quarantine, it cannot checkin
+                        (isolation[v] == 1 || quarantine[v] == 1) && continue
 
                         # store that an agent has been in that location
                         # after the protective measure
-                        if t >= intervention_start
+                        if t > intervention_start
                             location_visited[v, he.first] = 1
                         end
                     end
@@ -698,9 +705,8 @@ function simulate(
             # Δ = 12,
             # All locations are sanitized
             # at midday
-            #! check with other datasets
             if !isnothing(sanitize) && sanitize && t >= intervention_start
-                if t % (convert(Int, 24 / Δ)) in [3, 4, 5] 
+                if t % (convert(Int, 24 / Δ)) in sanification_intervals #[3, 4, 5] BLE 
                     #println("Sanitizing $(sum(hestatus)) @ interval $(t) -- $(get(intervals, t, 0).first) - $(get(intervals, t, 0).second)")
                     hestatus = zeros(Int, length(loc2he))
                 end
