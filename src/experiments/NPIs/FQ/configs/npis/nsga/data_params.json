@@ -1,0 +1,16 @@
+{
+    "dataset":"data/foursquare/dataset_TSMC2014_TKY_JCS4.txt",
+    "dataset_ac":"data/foursquare/dataset_TSMC2014_TKY_social_distancing_JSC4.txt",
+    "header":["userid", "venueid", "catid", "catname", "lat", "lng", "timezoneoffset", "UTCtime"],
+    "dateformat":"Y-m-dTH:M:S.0",
+    "dateformat_ac": "Y-m-dTH:M:S.0",
+    "datarow":2,
+    "datarow_ac": 2,
+    "start_date":"2012-05-07T00:00:00",
+    "end_date":"2012-06-07T00:00:00",
+    "userid":"userid",
+    "venueid":"venueid",
+    "UTCtime":"UTCtime"
+}
+
+

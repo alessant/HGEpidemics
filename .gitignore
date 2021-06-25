@@ -6,3 +6,4 @@ csv/
 test*
 latex/*
 tmp*
+results*

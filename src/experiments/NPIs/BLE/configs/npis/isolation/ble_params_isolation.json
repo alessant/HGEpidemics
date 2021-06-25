@@ -1,0 +1,15 @@
+{
+    "data_params":"src/experiments/NPIs/BLE/configs/no_npis/data_params.json",
+    "sim_params":"src/experiments/NPIs/BLE/configs/npis/isolation/sim_params.json",
+    "output_path":"src/experiments/NPIs/BLE/results/npi/isolation",
+    "agent_damage_path":"data/blebeacon/damage/damage_agents.csv",
+    "location_damage_path":"data/blebeacon/damage/damage_locs.csv",
+    "plot_infected":true,
+    "plot_infected_not_isolated":true,
+    "plot_isolated":true,
+    "store_simulation_data":true,
+    "check_damage":true,
+    "numerical_data":false,
+    "numerical_data_isolation":true
+}
+

@@ -1,6 +1,18 @@
 """
+    Plotting types
 """
-function plot_infected_distribution(simulation_data; output_path="")
+abstract type Abstract_Plot_Type end
+
+struct default_plot <: Abstract_Plot_Type end
+struct infected_not_isolated <: Abstract_Plot_Type end
+struct infected_not_quarantined <: Abstract_Plot_Type end
+
+struct isolation <: Abstract_Plot_Type end
+struct quarantine <: Abstract_Plot_Type end
+
+"""
+"""
+function plot_infected_distribution(type::default_plot, simulation_data; output_path="")
     linestyles = ["solid", "dashed", "dashdot", "dotted"]
     markers = ["", "", "", "", "x", "+"]
     
@@ -8,7 +20,7 @@ function plot_infected_distribution(simulation_data; output_path="")
         linestyle = 1
         marker = 1
         labels = Array{String, 1}()
-        mytitle = "$(test_type)_$(Dates.format(now(), "Y-mm-ddTHH-MM-SS")).png"
+        mytitle = "infected_dist_$(test_type)_$(Dates.format(now(), "Y-mm-ddTHH-MM-SS")).png"
     
         clf()
         figure(figsize=(7,4))
@@ -35,11 +47,206 @@ function plot_infected_distribution(simulation_data; output_path="")
                 marker = 1
             end
         end
+
+        legend(labels, fontsize="large", ncol=2)
+        plt.tight_layout()
+
+        savefig("$(output_path)/$(mytitle)")
+        println("Infected distribution -> saving figure in ... $(output_path)/$(mytitle)\n")
+    end    
+end
+
+
+"""
+"""
+function plot_infected_distribution(type::infected_not_isolated, simulation_data; output_path="")
+    linestyles = ["solid", "dashed", "dashdot", "dotted"]
+    markers = ["", "", "", "", "x", "+"]
+    
+    for test_type in keys(simulation_data)
+        linestyle = 1
+        marker = 1
+        labels = Array{String, 1}()
+        mytitle = "infected_not_isolated_dist_$(test_type)_$(Dates.format(now(), "Y-mm-ddTHH-MM-SS")).png"
+    
+        clf()
+        figure(figsize=(7,4))
+    
+        for exp in get!(simulation_data, test_type, Array{Float64, 1}())
+            ylim(bottom=0.0, top=1.0)
+            plot(exp.second.infected_not_isolated_distribution, linestyle=linestyles[linestyle], marker=markers[marker], markevery=10, markersize=6.5)
+    
+            xlabel("Time intervals", fontweight="semibold", labelpad=10, fontsize="x-large")
+            ylabel("Δ = $(exp.second.Δ) hours \n Infected nodes in %", fontweight="semibold", fontsize="x-large", labelpad=10)
+            title("δ = $(exp.second.δ) minutes", pad=10, fontweight="semibold", fontsize="x-large")
+    
+            tick_params(labelsize="large")
+    
+            push!(labels, exp.first)
+    
+            linestyle = (linestyle + 1) % (length(linestyles)+1)
+            marker = (marker + 1) % (length(markers)+1)
+    
+            if linestyle == 0
+                linestyle = 1
+            end
+            if marker == 0
+                marker = 1
+            end
+        end
         legend(labels, fontsize="large", ncol=2)
         plt.tight_layout()
         savefig("$(output_path)/$(mytitle)")
-        println("Infected distribution -> saving figure in ... $(output_path)/$(mytitle)")
+        println("Infected not isolated distribution -> saving figure in ... $(output_path)/$(mytitle)\n")
     end    
+end
+
+
+"""
+"""
+function plot_infected_distribution(type::infected_not_quarantined, simulation_data; output_path="")
+    linestyles = ["solid", "dashed", "dashdot", "dotted"]
+    markers = ["", "", "", "", "x", "+"]
+    
+    for test_type in keys(simulation_data)
+        linestyle = 1
+        marker = 1
+        labels = Array{String, 1}()
+        mytitle = "infected_not_quarantined_dist_$(test_type)_$(Dates.format(now(), "Y-mm-ddTHH-MM-SS")).png"
+    
+        clf()
+        figure(figsize=(7,4))
+    
+        for exp in get!(simulation_data, test_type, Array{Float64, 1}())
+            ylim(bottom=0.0, top=1.0)
+            plot(exp.second.infected_not_quarantined_distribution, linestyle=linestyles[linestyle], marker=markers[marker], markevery=10, markersize=6.5)
+    
+            xlabel("Time intervals", fontweight="semibold", labelpad=10, fontsize="x-large")
+            ylabel("Δ = $(exp.second.Δ) hours \n Infected nodes in %", fontweight="semibold", fontsize="x-large", labelpad=10)
+            title("δ = $(exp.second.δ) minutes", pad=10, fontweight="semibold", fontsize="x-large")
+    
+            tick_params(labelsize="large")
+    
+            push!(labels, exp.first)
+    
+            linestyle = (linestyle + 1) % (length(linestyles)+1)
+            marker = (marker + 1) % (length(markers)+1)
+    
+            if linestyle == 0
+                linestyle = 1
+            end
+            if marker == 0
+                marker = 1
+            end
+        end
+        legend(labels, fontsize="large", ncol=2)
+        plt.tight_layout()
+
+        savefig("$(output_path)/$(mytitle)")
+        println("Infected not quarantined distribution -> saving figure in ... $(output_path)/$(mytitle)\n")
+    end    
+end
+
+
+"""
+"""
+function plot_status_distribution(type::isolation, simulation_data; output_path="")
+    linestyles = ["solid", "dashed", "dashdot", "dotted"]
+    markers = ["", "", "", "", "x", "+"]
+
+    for test_type in keys(simulation_data)
+        linestyle = 1
+        marker = 1
+        labels = Array{String, 1}()
+        mytitle = "isolated_status_$(test_type)_$(Dates.format(now(), "Y-mm-ddTHH-MM-SS")).png"
+
+        clf()
+        figure(figsize=(7,4))
+
+        for exp in get!(simulation_data, test_type, Array{Float64, 1}())
+            ylim(bottom=0.0, top=1.0)
+
+            plot(exp.second.isolated_distribution, linestyle=linestyles[linestyle], marker=markers[marker], markevery=10, markersize=6.5)
+            plot(exp.second.infected_not_isolated_distribution, linestyle=linestyles[linestyle], marker=markers[marker], markevery=10, markersize=6.5)
+            plot(exp.second.susceptible_distribution, linestyle=linestyles[linestyle], marker=markers[marker], markevery=10, markersize=6.5)
+
+            xlabel("Time intervals", fontweight="semibold", labelpad=10, fontsize="x-large")
+            ylabel("Δ = $(exp.second.Δ) hours \n Infected nodes in %", fontweight="semibold", fontsize="x-large", labelpad=10)
+            title("δ = $(exp.second.δ) minutes", pad=10, fontweight="semibold", fontsize="x-large")
+
+            tick_params(labelsize="large")
+
+            push!(labels, exp.first)
+
+            linestyle = (linestyle + 1) % (length(linestyles)+1)
+            marker = (marker + 1) % (length(markers)+1)
+
+            if linestyle == 0
+                linestyle = 1
+            end
+            if marker == 0
+                marker = 1
+            end
+        end
+
+        labels = ["isolated", "infected not isolated", "susceptibles"]
+        legend(labels, fontsize="large", ncol=2)
+
+        plt.tight_layout()
+        savefig("$(output_path)/$(mytitle)")
+        println("Saving isolated status dist in ... $(output_path)/$(mytitle)\n")
+    end
+end
+
+
+"""
+"""
+function plot_status_distribution(type::quarantine, simulation_data; output_path="")
+    linestyles = ["solid", "dashed", "dashdot", "dotted"]
+    markers = ["", "", "", "", "x", "+"]
+
+    for test_type in keys(simulation_data)
+        linestyle = 1
+        marker = 1
+        labels = Array{String, 1}()
+        mytitle = "quarantine_status_$(test_type)_$(Dates.format(now(), "Y-mm-ddTHH-MM-SS")).png"
+
+        clf()
+        figure(figsize=(7,4))
+
+        for exp in get!(simulation_data, test_type, Array{Float64, 1}())
+            ylim(bottom=0.0, top=1.0)
+
+            plot(exp.second.quarantined_distribution, linestyle=linestyles[linestyle], marker=markers[marker], markevery=10, markersize=6.5)
+            plot(exp.second.infected_not_quarantined_distribution, linestyle=linestyles[linestyle], marker=markers[marker], markevery=10, markersize=6.5)
+            plot(exp.second.susceptible_distribution, linestyle=linestyles[linestyle], marker=markers[marker], markevery=10, markersize=6.5)
+
+            xlabel("Time intervals", fontweight="semibold", labelpad=10, fontsize="x-large")
+            ylabel("Δ = $(exp.second.Δ) hours \n Infected nodes in %", fontweight="semibold", fontsize="x-large", labelpad=10)
+            title("δ = $(exp.second.δ) minutes", pad=10, fontweight="semibold", fontsize="x-large")
+
+            tick_params(labelsize="large")
+
+            push!(labels, exp.first)
+
+            linestyle = (linestyle + 1) % (length(linestyles)+1)
+            marker = (marker + 1) % (length(markers)+1)
+
+            if linestyle == 0
+                linestyle = 1
+            end
+            if marker == 0
+                marker = 1
+            end
+        end
+
+        labels = ["quarantined", "infected not quarantined", "susceptibles"]
+        legend(labels, fontsize="large", ncol=2)
+
+        plt.tight_layout()
+        savefig("$(output_path)/$(mytitle)")
+        println("Saving quarantined status dist in ... $(output_path)/$(mytitle)\n")
+    end
 end
 
 

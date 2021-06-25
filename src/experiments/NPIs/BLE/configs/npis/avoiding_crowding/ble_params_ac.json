@@ -1,0 +1,11 @@
+{
+    "data_params":"src/experiments/NPIs/BLE/configs/npis/avoiding_crowding/data_params.json",
+    "sim_params":"src/experiments/NPIs/BLE/configs/npis/avoiding_crowding/sim_params.json",
+    "output_path":"src/experiments/NPIs/BLE/results/npi/avoiding_crowding",
+    "agent_damage_path":"data/blebeacon/damage/damage_agents.csv",
+    "location_damage_path":"data/blebeacon/damage/damage_locs.csv",
+    "plot_infected":true,
+    "store_simulation_data":true,
+    "check_damage":true,
+    "numerical_data":true
+}

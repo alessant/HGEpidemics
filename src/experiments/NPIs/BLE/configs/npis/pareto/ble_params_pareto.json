@@ -1,0 +1,7 @@
+{
+    "data_params":"src/experiments/NPIs/BLE/configs/npis/pareto/data_params.json",
+    "sim_params":"src/experiments/NPIs/BLE/configs/npis/pareto/sim_params_both.json",
+    "output_path":"src/experiments/NPIs/BLE/results/npi/pareto",
+    "agent_damage_path":"data/blebeacon/damage/damage_agents.csv",
+    "location_damage_path":"data/blebeacon/damage/damage_locs.csv"
+}
