@@ -13,6 +13,7 @@ using Revise
 using Serialization
 using SimpleHypergraphs
 using StatsBase
+using Base.Filesystem
 
 
 export find_intervals, evaluate_checkin_density, evaluate_checkins_distribution
@@ -63,9 +64,8 @@ include("utils/plotter.jl")
 export store_infected_distribution_data, store_SIS_distribution_data
 include("utils/latex.jl")
 
-
-export init_simulation, run_simulation
-include("experiments/NSGA/sim_utils.jl")
-include("experiments/NSGA/latex_utils.jl")
+# export init_simulation, run_simulation
+# include("experiments/NSGA/sim_utils.jl")
+# include("experiments/NSGA/latex_utils.jl")
 
 end # module

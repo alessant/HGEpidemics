@@ -37,14 +37,11 @@ function generate_model_data(
     mindate::Union{DateTime,Nothing} = nothing,
     maxdate::Union{DateTime,Nothing} = nothing
 )
-
-    df = CSV.read(
-        fname,
-        DataFrame;
-        header = columns,
-        dateformat = dateformat,
-        datarow = datarow
-    )
+    df = CSV.File(
+        fname, 
+        header = columns, 
+        dateformat = dateformat, 
+        datarow = datarow) |> DataFrame
 
     # remove all rows without a timestamp
     df = dropmissing(df, timestamp)

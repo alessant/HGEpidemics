@@ -155,11 +155,12 @@ function inithg(df::DataFrame, user2vertex::Dict{String, Int}, loc2he::Dict{Stri
 
     for checkin in eachrow(df)
         !isnothing(thr) && length(getvertices(h, get(loc2he, string(checkin.venueid), -1))) >= thr && continue
-
+        
         # this should never happen
         # the df is cleaned from missing data
         if get(loc2he, checkin.venueid, -1) == -1
             println(checkin.venueid)
+            @assert(get(loc2he, string(checkin.venueid), -1) != -1)
         end
 
         # if a user visits the same place in the same timeframe
@@ -168,7 +169,7 @@ function inithg(df::DataFrame, user2vertex::Dict{String, Int}, loc2he::Dict{Stri
             h,
             Dates.value(checkin.timestamp),  # checkin to store
             get(user2vertex, string(checkin.userid), -1), # node id
-            get(loc2he, checkin.venueid, -1) # hyperedge id
+            get(loc2he, string(checkin.venueid), -1) # hyperedge id
         )
     end
 
