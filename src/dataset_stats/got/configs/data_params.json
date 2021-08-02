@@ -1,0 +1,11 @@
+{
+    "dataset":"data/got/checkins_JCS.csv",
+    "header":["character", "location", "timestamp"],
+    "dateformat":"yyyy-mm-ddTHH:MM:SS",
+    "start_date":"2020-01-01T00:01:45",
+    "end_date":"2020-02-01T00:00:00",
+    "datarow":2,
+    "userid":"character",
+    "venueid":"location",
+    "UTCtime":"timestamp"
+}

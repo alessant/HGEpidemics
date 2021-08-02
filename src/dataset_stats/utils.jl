@@ -55,7 +55,7 @@ function evaluate_checkin_density(intervals::Dict{Int, Pair{DateTime, DateTime}}
 
     for interval in intervals
         currdf = filter(
-            r -> ((r.UTCtime >= (interval.second.first)) && (r.UTCtime < (interval.second.second))),
+            r -> ((r.timestamp >= (interval.second.first)) && (r.timestamp < (interval.second.second))),
             df
         )
         push!(
@@ -80,7 +80,7 @@ function evaluate_checkins_distribution(intervals::Dict{Int, Pair{DateTime, Date
 
     for interval in intervals
         currdf = filter(
-            r -> ((r.UTCtime >= (interval.second.first)) && (r.UTCtime < (interval.second.second))),
+            r -> ((r.timestamp >= (interval.second.first)) && (r.timestamp < (interval.second.second))),
             df
         )
 
@@ -92,7 +92,7 @@ function evaluate_checkins_distribution(intervals::Dict{Int, Pair{DateTime, Date
                     if r₁.userid != r₂.userid && r₁.venueid == r₂.venueid
                         push!(
                             get!(diff_within_intervals, interval.first, Array{Int, 1}()),
-                            convert(Dates.Second, abs(r₁.UTCtime - r₂.UTCtime)).value
+                            convert(Dates.Second, abs(r₁.timestamp - r₂.timestamp)).value
                         )
                     end
                 end
@@ -115,7 +115,7 @@ function evaluate_direct_contacts_distribution(intervals::Dict{Int, Pair{DateTim
 
     for interval in intervals
         currdf = filter(
-            r -> ((r.UTCtime >= (interval.second.first)) && (r.UTCtime < (interval.second.second))),
+            r -> ((r.timestamp >= (interval.second.first)) && (r.timestamp < (interval.second.second))),
             df
         )
 
@@ -123,6 +123,7 @@ function evaluate_direct_contacts_distribution(intervals::Dict{Int, Pair{DateTim
 
         users = unique(currdf, :userid)#[!, :userid]
 
+        #! groupby
         for u in eachrow(users)
             uid = u.userid
             ucontacts = filter(r -> r.userid == uid, currdf)
@@ -131,10 +132,10 @@ function evaluate_direct_contacts_distribution(intervals::Dict{Int, Pair{DateTim
                 for r in eachrow(currdf)
                     if uc.userid != r.userid
                         if uc.venueid == r.venueid
-                            if abs(uc.UTCtime - r.UTCtime) <= δ
+                            if abs(uc.timestamp - r.timestamp) <= δ
                                 push!(
                                     get!(dc_distr, interval.first, Array{Int, 1}()),
-                                    convert(Dates.Second, abs(uc.UTCtime - r.UTCtime)).value
+                                    convert(Dates.Second, abs(uc.timestamp - r.timestamp)).value
                                 )
                             end
                         end
@@ -159,7 +160,7 @@ function evaluate_location_distribution(intervals::Dict{Int, Pair{DateTime, Date
 
     for interval in intervals
         currdf = filter(
-            r -> ((r.UTCtime >= (interval.second.first)) && (r.UTCtime < (interval.second.second))),
+            r -> ((r.timestamp >= (interval.second.first)) && (r.timestamp < (interval.second.second))),
             df
         )
 
