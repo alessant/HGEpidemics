@@ -1,0 +1,12 @@
+{
+    "data_params":"src/experiments/NPIs/FQ/configs/npis/nsga/data_params.json",
+    "sim_params":"src/experiments/NPIs/FQ/configs/npis/nsga/15_iter/sim_params_both.json",
+    "output_path":"src/experiments/NPIs/FQ/results/npis/nsga/both/paper2",
+    "agent_damage_path":"data/foursquare/damage/damage_agents.csv",
+    "location_damage_path":"data/foursquare/damage/damage_locs.csv",
+    "plot_infected":true,
+    "store_simulation_data":true,
+    "store_infected_distribution":true,
+    "check_damage":true,
+    "numerical_data":true
+}

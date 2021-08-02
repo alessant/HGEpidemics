@@ -1,0 +1,12 @@
+{
+    "data_params":"src/experiments/NPIs/GOT/configs/npis/nsga/data_params.json",
+    "sim_params":"src/experiments/NPIs/GOT/configs/npis/nsga/sim_params_both.json",
+    "output_path":"src/experiments/NPIs/GOT/results/npis/nsga/both/paper",
+    "agent_damage_path":"data/got/damage/damage_agents.csv",
+    "location_damage_path":"data/got/damage/damage_locations.csv",
+    "plot_infected":true,
+    "store_simulation_data":true,
+    "store_infected_distribution":true,
+    "check_damage":true,
+    "numerical_data":true
+}

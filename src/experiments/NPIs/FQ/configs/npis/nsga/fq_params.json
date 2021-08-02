@@ -1,7 +1,0 @@
-{
-    "data_params":"src/experiments/NPIs/FQ/configs/npis/nsga/data_params.json",
-    "sim_params":"src/experiments/NPIs/FQ/configs/npis/nsga/sim_params.json",
-    "output_path":"src/experiments/NPIs/FQ/results/npis/nsga",
-    "agent_damage_path":"data/foursquare/damage/damage_agents.csv",
-    "location_damage_path":"data/foursquare/damage/damage_locs.csv"
-}
