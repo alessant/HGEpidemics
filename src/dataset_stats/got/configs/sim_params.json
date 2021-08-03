@@ -1,0 +1,16 @@
+[
+  {
+    "exp_id":"baseline",
+    "exp":"direct-indirect",
+    "label":"Direct/Indirect",
+    "infected_percentage":0.2,
+    "c":5,
+    "Δ":4,
+    "δ":15,
+    "βd":0.57,
+    "βᵢ":0.29,
+    "βₑ":0.29,
+    "γₑ":0.018,
+    "γₐ":0.024
+  }
+]

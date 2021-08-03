@@ -3,3 +3,7 @@ data/
 Manifest.toml
 *.csv
 csv/
+test*
+latex/*
+tmp*
+results*

@@ -1,0 +1,8 @@
+{
+    "data_params":"src/experiments/NSGA/FQ/configs/data_params.json",
+    "sim_params":"src/experiments/NSGA/FQ/configs/sim_params.json",
+    "output_path":"src/experiments/NSGA/FQ/results/locations",
+    "agent_damage_path":"data/foursquare/damage/damage_agents.csv",
+    "location_damage_path":"data/foursquare/damage/damage_locs.csv",
+    "damage":"locations"
+}

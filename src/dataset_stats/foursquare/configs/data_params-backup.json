@@ -1,0 +1,14 @@
+{
+    "dataset":"data/foursquare/dataset_TSMC2014_TKY.txt",
+    "header":["userid", "venueid", "catid", "catname", "lat", "lng", "timezoneoffset", "UTCtime"],
+    "dateformat-new":"Y-m-dTH:M:S.0",
+    "dateformat":"e u d H:M:S +0000 Y",
+    "datarow":1,
+    "start_date":"2012-04-07T00:00:00",
+    "end_date":"2012-08-07T00:00:00",
+    "userid":"userid",
+    "venueid":"venueid",
+    "UTCtime":"UTCtime"
+}
+
+

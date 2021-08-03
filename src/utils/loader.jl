@@ -33,7 +33,7 @@ function generate_model_data(
     dateformat::AbstractString;
     Δ::Millisecond = Dates.Millisecond(14400000),
     δ::Millisecond = Dates.Millisecond(1000),
-    limit::Integer = typemax(Int32),
+    datarow::Integer = 1,
     mindate::Union{DateTime,Nothing} = nothing,
     maxdate::Union{DateTime,Nothing} = nothing
 )
@@ -43,7 +43,7 @@ function generate_model_data(
         DataFrame;
         header = columns,
         dateformat = dateformat,
-        #limit = limit
+        datarow = datarow
     )
 
     # remove all rows without a timestamp

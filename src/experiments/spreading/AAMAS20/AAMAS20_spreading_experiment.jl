@@ -35,7 +35,7 @@ fdata_params =
 
 # Section 5.4 - Modeling the effect of time
 fparams =
-    joinpath(project_path, "experiments", "spreading", "AAMAS20", "configs", "54", "temp.json")
+    joinpath(project_path, "experiments", "spreading", "AAMAS20", "configs", "54", "aamas54.json")
 
 
 
@@ -226,6 +226,8 @@ for test_type in keys(simulation_data)
         end
     end
     legend(labels, fontsize="large", ncol=2)
-    plt.tight_layout(.5)
+    plt.tight_layout()
     savefig("$(output_path)/plot/$(mytitle)")
 end
+
+

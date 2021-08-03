@@ -1,0 +1,8 @@
+{
+    "data_params":"src/experiments/NSGA/BLE/configs/data_params.json",
+    "sim_params":"src/experiments/NSGA/BLE/configs/sim_params_most_crowded.json",
+    "output_path":"src/experiments/NSGA/BLE/results/agents",
+    "agent_damage_path":"data/blebeacon/damage/damage_agents.csv",
+    "location_damage_path":"data/blebeacon/damage/damage_locs.csv",
+    "damage":"agents"
+}

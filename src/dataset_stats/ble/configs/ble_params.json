@@ -1,0 +1,5 @@
+{
+    "data_params":"src/dataset_stats/ble/configs/data_params.json",
+    "sim_params":"src/dataset_stats/ble/configs/sim_params.json",
+    "output_path":"src/dataset_stats/ble/res"
+}

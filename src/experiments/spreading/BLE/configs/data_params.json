@@ -1,0 +1,10 @@
+{
+    "dataset":"data/blebeacon/BLEBeacon-Dataset-master/Check-In Check-Out Report.csv",
+    "header":["entry_id", "userid", "UTCtime", "out_time", "venueid"],
+    "dateformat":"Y-m-d H:M:S",
+    "start_date":"2016-09-15T00:00:00",
+    "end_date":"2016-10-18T00:00:00",
+    "userid":"userid",
+    "venueid":"venueid",
+    "UTCtime":"UTCtime"
+}

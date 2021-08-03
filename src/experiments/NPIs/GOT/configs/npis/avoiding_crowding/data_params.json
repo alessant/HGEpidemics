@@ -1,0 +1,14 @@
+{
+    "dataset":"data/got/checkins_JCS.csv",
+    "dataset_ac":"data/got/checkins_reduced_JCS.csv",
+    "header":["character", "location", "timestamp"],
+    "dateformat":"yyyy-mm-ddTHH:MM:SS",
+    "dateformat_ac": "Y-m-dTH:M:S.0",
+    "datarow": 2,
+    "datarow_ac": 2,
+    "start_date":"2020-01-01T00:01:45",
+    "end_date":"2020-02-01T00:00:00",
+    "userid":"character",
+    "venueid":"location",
+    "UTCtime":"timestamp"
+}

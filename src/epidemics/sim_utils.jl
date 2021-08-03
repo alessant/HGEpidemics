@@ -47,3 +47,40 @@ function infected(
 
     sum
 end
+
+
+function infected_ppm(
+        h::Hypergraph, 
+        he::Int, 
+        vstatus::Array{Int, 1}, 
+        ppm::Array{Int, 1}; 
+        istatus::Union{Array{Int, 1}, Nothing} = nothing,
+        quarantine::Union{Array{Int, 1}, Nothing} = nothing,
+        isolation::Union{Array{Int, 1}, Nothing} = nothing
+    )
+    
+    vertices = getvertices(h, he)
+    sum, sum_ppm = 0, 0
+
+    for v in vertices
+        # if the node is not immunized
+        if istatus[v.first] == 0
+            if isnothing(quarantine) && isnothing(isolation)
+                if ppm[v.first] == 1
+                    sum_ppm += vstatus[v.first]
+                else
+                    sum += vstatus[v.first]
+                end
+            else
+                if quarantine[v.first] == 0 && isolation[v.first] == 0
+                    if ppm[v.first] == 1
+                        sum_ppm += vstatus[v.first]
+                    else
+                        sum += vstatus[v.first]
+                    end
+                end
+            end
+        end
+    end
+    sum, sum_ppm
+end
