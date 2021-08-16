@@ -158,7 +158,7 @@ function inithg(df::DataFrame, user2vertex::Dict{String, Int}, loc2he::Dict{Stri
         
         # this should never happen
         # the df is cleaned from missing data
-        if get(loc2he, checkin.venueid, -1) == -1
+        if get(loc2he, string(checkin.venueid), -1) == -1
             println(checkin.venueid)
             @assert(get(loc2he, string(checkin.venueid), -1) != -1)
         end

@@ -162,12 +162,12 @@ for testtype in keys(test_data)
                 vstatus = per_infected_data[test[:infected_percentage]],
                 per_infected = test[:infected_percentage],
                 c = test[:c],
-                βd = test[:βd],
+                βd = test[:βd], 
                 βᵢ = test[:βᵢ],
                 βₑ = test[:βₑ],
                 γₑ = test[:γₑ],
                 γₐ = test[:γₐ],
-                niter = 80,
+                niter = 10,
                 output_path = res_path,
                 store_me = false
             )
@@ -200,7 +200,7 @@ end
 # Plotting infected ditribution
 ########################
 if input_data["plot_infected"]
-    plot_infected_distribution(simulation_data; output_path=output_path)
+    plot_infected_distribution(default_plot(),simulation_data; output_path=output_path)
 end
 
 if haskey(input_data, "store_infected_distribution") && input_data["store_infected_distribution"]
