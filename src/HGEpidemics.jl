@@ -21,11 +21,12 @@ include("dataset_stats/utils.jl")
 
 
 export Abstract_Simulation_Model
-export SIS, SIS_NPIs
+export SIS, SIS_NPIs, SIS_NPIs_vax
 export simulate
 include("epidemics/sim_types.jl")
 include("epidemics/SIS.jl")
 include("epidemics/SIS_NPIs.jl")
+include("epidemics/SIS_NPIs_vax.jl")
 
 
 export store_damage, check_damage
@@ -35,6 +36,26 @@ include("epidemics/damage.jl")
 export uniform
 export custom
 include("epidemics/selection_strategies.jl")
+
+export degrees
+export centrality
+export random_walk
+export acquaintance
+export hg_pagerank
+export whg_pagerank
+export g_pagerank
+export wg_pagerank
+export hg_entropy
+export g_entropy
+export hg_entropy_mean
+export g_degrees
+export g_entropy_mean
+export both_entropy
+export both_entropy_norm
+export both_entropy_mean
+export acquaintance_new
+export most_loved
+include("epidemics/immunization_strategies.jl")
 
 
 export f, infected, infected_ppm

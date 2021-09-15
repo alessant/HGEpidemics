@@ -2,6 +2,28 @@ function initialize_params(config::Dict; int_max::Int = typemax(Int), df_ac::Uni
 
     intervention_start = haskey(config, :intervention_start) ? config[:intervention_start] : int_max
 
+    ################
+    # immunization
+    ################
+
+    # nodes
+    αᵥ = haskey(config, :αᵥ) ? config[:αᵥ] : 0
+
+    if haskey(config, :nodes_immunization_strategy)
+        nodes_immunization_strategy =
+            ismissing(config[:nodes_immunization_strategy]) ? nothing : getfield(Main, Symbol(config[:nodes_immunization_strategy]))
+    else
+        nodes_immunization_strategy = nothing
+    end
+
+    # hyperedges
+    if haskey(config, :edges_immunization_strategy)
+        edges_immunization_strategy =
+            ismissing(config[:edges_immunization_strategy]) ? nothing : getfield(Main, Symbol(config[:edges_immunization_strategy]))
+    else
+        edges_immunization_strategy = nothing
+    end
+
     # PPM
     αₚ = haskey(config, :αₚ) ? config[:αₚ] : 0
     ppm_βd = haskey(config, :ppm_βd) ? config[:ppm_βd] : nothing
@@ -63,6 +85,9 @@ function initialize_params(config::Dict; int_max::Int = typemax(Int), df_ac::Uni
     #
     params = OrderedDict{Symbol, Any}(
         :intervention_start => intervention_start,
+        :αᵥ => αᵥ,
+        :nodes_immunization_strategy => nodes_immunization_strategy,
+        :edges_immunization_strategy => edges_immunization_strategy,
         :αₚ => αₚ,
         :ppm_βd => ppm_βd, 
         :ppm_βₑ => ppm_βₑ, 
