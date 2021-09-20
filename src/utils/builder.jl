@@ -174,3 +174,514 @@ function inithg(df::DataFrame, user2vertex::Dict{String, Int}, loc2he::Dict{Stri
 
     h
 end
+
+
+# TODO adjust the following consider
+
+function generate_hg_g_weighted!(
+    df::DataFrame,
+    mindate::Union{DateTime, Nothing},
+    maxdate::DateTime,
+    user2vertex::Dict{String, Int},
+    loc2he::Dict{String, Int},
+    δ::Dates.Millisecond
+)
+    currdf = filter(r->((r.timestamp >= mindate) && (r.timestamp < maxdate)), df)
+
+    h = Hypergraph{Int, String, String}(length(keys(user2vertex)), length(keys(loc2he)))
+    hw = Hypergraph{Float64, String, String}(length(keys(user2vertex)), length(keys(loc2he)))
+    g = SimpleGraph{Int}(length(keys(user2vertex)))
+    gw = SimpleWeightedGraph(length(keys(user2vertex)))
+
+    #map each node to a list of checkin in locid with time 
+    # locid -> nodeid, time ; ....
+    checkins = Dict{Int, Dict{Int, Int}}()
+   
+   
+    for checkin in eachrow(currdf)
+        # this should never happen
+        # the df is cleaned from missing data
+        if get(loc2he, checkin.venueid, -1) == -1
+            println(checkin.venueid)
+        end
+
+        nodeid =  get(user2vertex, string(checkin.userid), -1)
+        locid =  get(loc2he, checkin.venueid, -1)
+
+        push!(
+            get!(checkins, locid,  Dict{Int, Int}()),
+            nodeid =>  Dates.value(checkin.timestamp)
+        ) 
+    end
+
+    for locid in keys(checkins)
+        visiting_nodes = get!(checkins, locid, nothing)
+        isnothing(visiting_nodes) && continue
+
+        for u in keys(visiting_nodes)
+            ndirect = 0
+            for v in keys(visiting_nodes)
+                if u!=v && abs(visiting_nodes[u] -  visiting_nodes[v]) <= δ.value
+                    ndirect += 1
+                    add_edge!(g, u, v)
+                    
+                    w = gw.weights[u,v]
+                    add_edge!(gw, u, v, w + 1.0)
+                end
+            end
+            setindex!(
+                h,
+                1, #ndirect,  # number of direct contact of u in locid
+                u, # node id
+                locid # hyperedge id
+            )
+
+            setindex!(
+                hw,
+                ndirect/198, #ndirect,  # number of direct contact of u in locid
+                u, # node id
+                locid # hyperedge id
+            )
+        end
+    end
+
+    # for v in 1:nhv(h)
+    #     for he in 1:nhe(h)
+    #         if isnothing(h[v, he])
+    #             h[v, he] = 0
+    #         end
+    #     end
+    # end
+
+    g, gw, h, hw
+end
+
+
+function evaluate_entropy(
+    df::DataFrame,
+    mindate::DateTime,
+    maxdate::DateTime,
+    user2vertex::Dict{String, Int},
+    loc2he::Dict{String, Int}
+)
+
+    user2location = Dict{Int, Array{Int, 1}}()
+
+    for user in user2vertex
+        push!(
+            user2location,
+            user2vertex[user.first] => Array{Int, 1}()
+        )
+    end
+
+    to_return = Dict{Int, Float64}()
+
+
+    # for t in slots
+
+    #     t == imm_start && continue
+
+    #     mindate = get(intervals, t, 0).first
+    #     maxdate = get(intervals, t, 0).second
+
+    #     currdf = filter(r->((r.timestamp >= mindate) && (r.timestamp < maxdate)), df)
+
+    #     for checkin in eachrow(currdf)
+    #         push!(
+    #             get!(user2location, user2vertex[string(checkin.userid)], Array{Int, 1}()),
+    #             loc2he[checkin.venueid]
+    #         )
+    #     end
+    # end
+
+    currdf = filter(r->((r.timestamp >= mindate) && (r.timestamp < maxdate)), df)
+
+    for checkin in eachrow(currdf)
+        push!(
+            get!(user2location, user2vertex[string(checkin.userid)], Array{Int, 1}()),
+            loc2he[checkin.venueid]
+        )
+    end
+
+    for u in keys(user2location)
+        data = user2location[u]
+        
+        if length(data) == 0 || length(data) == 1 || length(unique(data)) == 1
+            push!(
+                to_return,
+                u => 0 #typemin(Int)
+            )
+        else
+            entropy = get_entropy(data)
+
+            push!(
+                to_return,
+                u => entropy < eps() ? 0.0 : entropy
+            )
+        end
+    end
+
+    to_return
+end
+
+
+
+function evaluate_entropy_direct(
+    df::DataFrame,
+    mindate::DateTime,
+    maxdate::DateTime,
+    δ,
+    user2vertex::Dict{String, Int},
+    loc2he::Dict{String, Int}
+)
+
+    user2contact = Dict{Int, Array{Int, 1}}()
+    to_return = Dict{Int, Float64}()
+
+
+    #map each node to a list of checkin in locid with time 
+    # locid -> nodeid, time ; ....
+    checkins = Dict{Int, Dict{Int, Int}}()
+
+
+    currdf = filter(r->((r.timestamp >= mindate) && (r.timestamp < maxdate)), df)
+
+    for checkin in eachrow(currdf)
+        # this should never happen
+        # the df is cleaned from missing data
+        if get(loc2he, checkin.venueid, -1) == -1
+            println(checkin.venueid)
+        end
+
+        nodeid =  get(user2vertex, string(checkin.userid), -1)
+        locid =  get(loc2he, checkin.venueid, -1)
+
+        push!(
+            get!(checkins, locid,  Dict{Int, Int}()),
+            nodeid =>  Dates.value(checkin.timestamp)
+        ) 
+    end
+
+
+    for locid in keys(checkins)
+        visiting_nodes = get!(checkins, locid, nothing)
+        isnothing(visiting_nodes) && continue
+
+        for u in keys(visiting_nodes)
+            ndirect = 0
+            for v in keys(visiting_nodes)
+                if u!=v && abs(visiting_nodes[u] -  visiting_nodes[v]) <= δ.value
+                    ndirect += 1
+                    #add_edge!(g, u, v)
+
+                    push!(  
+                        get!(user2contact, v, Array{Int, 1}()),
+                        u
+                    )
+
+                    push!(  
+                        get!(user2contact, u, Array{Int, 1}()),
+                        v
+                    )
+                end
+            end
+        end
+    end
+
+
+    # for t in slots
+
+    #     t == imm_start && continue
+
+    #     mindate = get(intervals, t, 0).first
+    #     maxdate = get(intervals, t, 0).second
+
+    #     currdf = filter(r->((r.timestamp >= mindate) && (r.timestamp < maxdate)), df)
+
+    #     g = build_graph(currdf, δ, user2vertex, loc2he)
+
+    #     for v in vertices(g)
+    #         for u in neighbors(g, v)
+    #             push!(  
+    #                 get!(user2contact, v, Array{Int, 1}()),
+    #                 u
+    #             )
+    #         end
+    #     end
+    # end
+
+    #currdf = filter(r->((r.timestamp >= mindate) && (r.timestamp < maxdate)), df)
+    #g = build_graph(currdf, δ, user2vertex, loc2he)
+
+    # for v in vertices(g)
+    #     for u in neighbors(g, v)
+    #         push!(  
+    #             get!(user2contact, v, Array{Int, 1}()),
+    #             u
+    #         )
+    #     end
+    # end
+
+    for u in keys(user2contact)
+        data = user2contact[u]
+        
+        if length(data) == 1 || length(unique(data)) == 1
+            push!(
+                to_return,
+                u => 0#typemin(Int)
+            )
+        else
+            entropy = get_entropy(data)
+
+            push!(
+                to_return,
+                u => entropy < eps() ? 0.0 : entropy
+            )
+        end
+    end
+
+    to_return
+end
+
+
+
+function evaluate_entropy_direct_mean(
+    df::DataFrame,
+    intervals,
+    δ,
+    user2vertex::Dict{String, Int},
+    loc2he::Dict{String, Int},
+    start_slot,
+    end_slot
+)
+
+    entropies = Dict{Int, Array{Float64, 1}}()
+    to_return = Dict{Int, Float64}()
+
+    for t in start_slot:end_slot
+        #
+        user2contact = Dict{Int, Array{Int, 1}}()
+
+        mindate = get(intervals, t, 0).first
+        maxdate = get(intervals, t, 0).second
+
+        currdf = filter(r->((r.timestamp >= mindate) && (r.timestamp < maxdate)), df)
+
+        g = build_graph(currdf, δ, user2vertex, loc2he)
+
+        for v in vertices(g)
+            for u in neighbors(g, v)
+                push!(  
+                    get!(user2contact, v, Array{Int, 1}()),
+                    u
+                )
+            end
+        end
+
+        # evaluate evaluate_entropy
+        for u in keys(user2contact)
+            data = user2contact[u]
+            
+            if length(data) == 1
+                push!(
+                    get!(entropies, u, Array{Float64, 1}()),
+                    0
+                )
+            else
+                push!(
+                    get!(entropies, u, Array{Float64, 1}()),
+                    get_entropy(data)
+                )
+            end
+        end
+    end
+
+    # for v in keys(entropies)
+    #     λ = -1
+
+    #     entropies_v = entropies[v]
+    #     scaled_entropies = [entropy * ℯ ^ - λ * t for (t, entropy) in enumerate(entropies_v)]
+    #     val = maximum(scaled_entropies)
+
+    #     push!(to_return, v => val)
+    # end
+
+    for v in keys(entropies)
+        push!(to_return, v => sum(entropies[v])/length(entropies[v]))
+    end
+
+    to_return
+end
+
+
+
+
+function evaluate_entropy_indirect_mean(
+    df::DataFrame,
+    intervals,
+    user2vertex::Dict{String, Int},
+    loc2he::Dict{String, Int},
+    start_slot,
+    end_slot
+)
+
+    entropies = Dict{Int, Array{Float64, 1}}()
+    to_return = Dict{Int, Float64}()
+
+    for t in range(start_slot, stop=end_slot)
+        user2location = Dict{Int, Array{Int, 1}}()
+
+        mindate = get(intervals, t, 0).first
+        maxdate = get(intervals, t, 0).second
+
+        currdf = filter(r->((r.timestamp >= mindate) && (r.timestamp < maxdate)), df)
+
+        for checkin in eachrow(currdf)
+            push!(
+                get!(user2location, user2vertex[string(checkin.userid)], Array{Int, 1}()),
+                loc2he[checkin.venueid]
+            )
+        end
+
+        #evaluate_entropy
+        for u in keys(user2location)
+            data = user2location[u]
+            
+            if length(data) == 1 || length(unique(data)) == 1
+                push!(
+                    get!(entropies, u, Array{Float64, 1}()),
+                    0
+                )
+            else
+                push!(
+                    get!(entropies, u, Array{Float64, 1}()),
+                    get_entropy(data)
+                )
+            end
+        end
+    end
+
+    # for v in keys(entropies)
+    #     λ = -1
+
+    #     entropies_v = entropies[v]
+    #     scaled_entropies = [entropy * ℯ ^ - λ * t for (t, entropy) in enumerate(entropies_v)]
+    #     val = maximum(scaled_entropies)
+
+    #     push!(to_return, v => val)
+    # end
+    
+    for v in keys(entropies)        
+        push!(to_return, v => sum(entropies[v]) / length(entropies[v]))
+    end
+
+    to_return
+end
+
+
+
+
+function evaluate_entropy_both(
+    df::DataFrame,
+    intervals,
+    δ,
+    user2vertex::Dict{String, Int},
+    loc2he::Dict{String, Int},
+)
+
+    user2contact = Dict{Int, Array{Int, 1}}()
+    to_return = Dict{Int, Float64}()
+
+    for t in 1:length(intervals)
+
+        t == 10 && continue
+
+        mindate = get(intervals, t, 0).first
+        maxdate = get(intervals, t, 0).second
+
+        # indirect
+        currdf = filter(r->((r.timestamp >= mindate) && (r.timestamp < maxdate)), df)
+
+        for checkin in eachrow(currdf)
+            push!(
+                get!(user2contact, user2vertex[string(checkin.userid)], Array{Int, 1}()),
+                loc2he[checkin.venueid] + length(user2vertex)
+            )
+        end
+
+        # direct
+        g = build_graph(currdf, δ, user2vertex, loc2he)
+
+        for v in vertices(g)
+            for u in neighbors(g, v)
+                push!(  
+                    get!(user2contact, v, Array{Int, 1}()),
+                    u
+                )
+            end
+        end
+    end
+
+    for u in keys(user2contact)
+        data = user2contact[u]
+        
+        if length(data) == 1
+            push!(
+                to_return,
+                u => typemin(Int)
+            )
+        else
+            push!(
+                to_return,
+                u => get_entropy(data)
+            )
+        end
+    end
+
+    to_return
+end
+
+
+
+function build_graph(df, δ, user2vertex, loc2he)
+    g = SimpleGraph{Int}(length(keys(user2vertex)))
+
+    #map each node to a list of checkin in locid with time 
+    # locid -> nodeid, time ; ....
+    checkins = Dict{Int, Dict{Int, Int}}()
+
+    for checkin in eachrow(df)
+        # this should never happen
+        # the df is cleaned from missing data
+        if get(loc2he, checkin.venueid, -1) == -1
+            println(checkin.venueid)
+        end
+
+        nodeid =  get(user2vertex, string(checkin.userid), -1)
+        locid =  get(loc2he, checkin.venueid, -1)
+
+        push!(
+            get!(checkins, locid,  Dict{Int, Int}()),
+            nodeid =>  Dates.value(checkin.timestamp)
+        ) 
+    end
+
+
+    for locid in keys(checkins)
+        visiting_nodes = get!(checkins, locid, nothing)
+        isnothing(visiting_nodes) && continue
+
+        for u in keys(visiting_nodes)
+            ndirect = 0
+            for v in keys(visiting_nodes)
+                if u!=v && abs(visiting_nodes[u] -  visiting_nodes[v]) <= δ.value
+                    ndirect += 1
+                    add_edge!(g, u, v)
+                end
+            end
+        end
+    end
+
+    g
+end
+

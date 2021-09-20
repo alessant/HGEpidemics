@@ -121,18 +121,18 @@ end
 
 
 
-"""
-    lockdown(h::Hypergraph, α::Union{Int, Float64}; kwargs...)
+# """
+#     lockdown(h::Hypergraph, α::Union{Int, Float64}; kwargs...)
 
- Close all location indicated in `kwargs[:path]`.
-"""
-function lockdown(h::Hypergraph, α::Union{Int, Float64, Nothing}; kwargs...)
-    if !isnothing(α)
-        to_return = deserialize(kwargs[:path])
-        return to_return[1:ceil(Int, length(to_return)*α)]
-    end
-    return deserialize(kwargs[:path])
-end
+#  Close all location indicated in `kwargs[:path]`.
+# """
+# function lockdown(h::Hypergraph, α::Union{Int, Float64, Nothing}; kwargs...)
+#     if !isnothing(α)
+#         to_return = deserialize(kwargs[:path])
+#         return to_return[1:ceil(Int, length(to_return)*α)]
+#     end
+#     return deserialize(kwargs[:path])
+# end
 
 
 

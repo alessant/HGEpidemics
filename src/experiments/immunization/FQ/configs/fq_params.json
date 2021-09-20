@@ -1,0 +1,8 @@
+{
+    "data_params":"src/experiments/immunization/FQ/configs/data_params.json",
+    "sim_params":"src/experiments/immunization/FQ/configs/sim_params.json",
+    "output_path":"src/experiments/immunization/FQ/results",
+    "plot_infected":true,
+    "store_infected_distribution":true,
+    "store_simulation_data":true
+}

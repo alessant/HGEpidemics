@@ -400,6 +400,19 @@ function simulate(
                 # apply the given immunization strategy
                 # to choose which αᵥ nodes will be immunized
                 if nodes_immunization
+
+                    nodes_immunization_strategy_kwargs[:mindate] = get(intervals, kwargs[:start_slot], 0).first
+                    nodes_immunization_strategy_kwargs[:maxdate] = get(intervals, kwargs[:end_slot], 0).second 
+
+                    nodes_immunization_strategy_kwargs[:df] = df
+                    nodes_immunization_strategy_kwargs[:intervals] = intervals
+                    nodes_immunization_strategy_kwargs[:user2vertex] = user2vertex
+                    nodes_immunization_strategy_kwargs[:loc2he] = loc2he
+                    nodes_immunization_strategy_kwargs[:δ] = δ
+                    nodes_immunization_strategy_kwargs[:imm_start] = imm_start
+                    nodes_immunization_strategy_kwargs[:start_slot] = kwargs[:start_slot]
+                    nodes_immunization_strategy_kwargs[:end_slot] = kwargs[:end_slot]
+
                     to_immunize = nodes_immunization_strategy(h, αᵥ; nodes_immunization_strategy_kwargs...)
                     map(v -> nextistatus[v] = 1, to_immunize)
                 end

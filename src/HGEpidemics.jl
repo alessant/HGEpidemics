@@ -66,6 +66,10 @@ include("epidemics/logging_utils.jl")
 
 export generate_model_data
 export inithg, generatehg!
+
+export build_graph
+export generate_hg_g_weighted! 
+export evaluate_entropy, evaluate_entropy_direct, evaluate_entropy_direct_mean, evaluate_entropy_indirect_mean, evaluate_entropy_both
 include("utils/loader.jl")
 include("utils/builder.jl")
 
@@ -88,5 +92,10 @@ include("utils/latex.jl")
 export init_simulation, run_simulation
 include("experiments/NSGA/sim_utils.jl")
 include("experiments/NSGA/latex_utils.jl")
+
+export hrwr, brwr, weighted_pagerank
+include("epidemics/utils/hrwr.jl")
+include("epidemics/utils/brwr.jl")
+include("epidemics/utils/weighted_PR.jl")
 
 end # module
