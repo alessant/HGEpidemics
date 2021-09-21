@@ -154,7 +154,7 @@ function hg_pagerank(h::Hypergraph, α::Union{Int, Float64, Nothing}; kwargs...)
         end
     end
 
-    R, P = hrwr(hg)
+    R, P = hrwr_sparse(hg)
     rank = R[1, :]
 
     to_return = sort!(collect(1:nhv(h)), by = x -> rank[x], rev = true)
@@ -172,7 +172,7 @@ function whg_pagerank(h::Hypergraph, α::Union{Int, Float64, Nothing}; kwargs...
             kwargs[:δ]
         )
 
-    R, P = hrwr(hgw)
+    R, P = hrwr_sparse(hgw)
     rank = R[1, :]
 
     to_return = sort!(collect(1:nhv(h)), by = x -> rank[x], rev = true)

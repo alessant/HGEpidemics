@@ -124,3 +124,60 @@ function print_params(params)
 end
 
 
+
+# TODO - revise
+function initialize_params_immunization(config::Dict; int_max::Int = typemax(Int), printme::Bool = false)
+
+    ################
+    # immunization
+    ################
+
+    intervention_start = haskey(config, :intervention_start) ? config[:intervention_start] : int_max
+
+    # nodes
+    αᵥ = haskey(config, :αᵥ) ? config[:αᵥ] : 0
+
+    if haskey(config, :nodes_immunization_strategy)
+        nodes_immunization_strategy =
+            ismissing(config[:nodes_immunization_strategy]) ? nothing : getfield(Main, Symbol(config[:nodes_immunization_strategy]))
+    else
+        nodes_immunization_strategy = nothing
+    end
+
+    # hyperedges
+    αₑ = haskey(config, :αₑ) ? config[:αₑ] : 0
+
+    if haskey(config, :edges_immunization_strategy)
+        edges_immunization_strategy =
+            ismissing(config[:edges_immunization_strategy]) ? nothing : getfield(Main, Symbol(config[:edges_immunization_strategy]))
+    else
+        edges_immunization_strategy = nothing
+    end
+
+    # if haskey(config, :start_slot) && haskey(config, :end_slot)
+    #     immunization_strategy_kwargs = Dict{Symbol, Int}(:start_slot => config[:start_slot], :end_slot => config[:end_slot])
+    # else
+    #     immunization_strategy_kwargs = Dict{}()
+    # end
+
+    #
+    # params dict
+    #
+    params = OrderedDict{Symbol, Any}(
+        :intervention_start => intervention_start,
+        :αᵥ => αᵥ,
+        :nodes_immunization_strategy => nodes_immunization_strategy,
+        #:nodes_immunization_strategy_kwargs => immunization_strategy_kwargs,
+        :αₑ => αₑ,
+        :edges_immunization_strategy => edges_immunization_strategy,
+        #:edges_immunization_strategy_kwargs => immunization_strategy_kwargs,
+        :start_slot => haskey(config, :start_slot) ? config[:start_slot] : nothing,
+        :end_slot => haskey(config, :end_slot) ? config[:end_slot] : nothing,
+    )
+
+    printme && println(params)
+
+    params
+end
+
+

@@ -1,6 +1,6 @@
 {
     "data_params":"src/experiments/immunization/FQ/configs/data_params.json",
-    "sim_params":"src/experiments/immunization/FQ/configs/sim_params.json",
+    "sim_params":"src/experiments/immunization/WWW22_experiment_configs/52_global_order_varying.json",
     "output_path":"src/experiments/immunization/FQ/results",
     "plot_infected":true,
     "store_infected_distribution":true,

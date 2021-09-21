@@ -4,15 +4,21 @@ using CSV
 using DataFrames
 using Dates
 using DataStructures
+using InformationMeasures
 using JSON
 using JSON3
 using JSONTables
+using LightGraphs
+using LinearAlgebra
 using PyPlot
 using Random
 using Revise
 using Serialization
 using SimpleHypergraphs
+using SimpleWeightedGraphs
+using SparseArrays
 using StatsBase
+using Statistics
 
 
 export find_intervals, evaluate_checkin_density, evaluate_checkins_distribution
@@ -21,11 +27,12 @@ include("dataset_stats/utils.jl")
 
 
 export Abstract_Simulation_Model
-export SIS, SIS_NPIs, SIS_NPIs_vax
+export SIS, SIS_NPIs, SIS_vax, SIS_NPIs_vax
 export simulate
 include("epidemics/sim_types.jl")
 include("epidemics/SIS.jl")
 include("epidemics/SIS_NPIs.jl")
+include("epidemics/SIS_vax.jl")
 include("epidemics/SIS_NPIs_vax.jl")
 
 
@@ -75,6 +82,7 @@ include("utils/builder.jl")
 
 
 export initialize_params
+export initialize_params_immunization
 include("utils/params_handler.jl")
 
 
@@ -94,7 +102,9 @@ include("experiments/NSGA/sim_utils.jl")
 include("experiments/NSGA/latex_utils.jl")
 
 export hrwr, brwr, weighted_pagerank
+export hrwr_sparse
 include("epidemics/utils/hrwr.jl")
+include("epidemics/utils/hrwr_sparse.jl")
 include("epidemics/utils/brwr.jl")
 include("epidemics/utils/weighted_PR.jl")
 
