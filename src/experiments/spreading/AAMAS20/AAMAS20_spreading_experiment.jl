@@ -1,3 +1,6 @@
+using Pkg
+Pkg.activate(".")
+
 using HGEpidemics
 
 using CSV
@@ -182,7 +185,12 @@ for testtype in keys(test_data)
 
         push!(
             get!(simulation_data, testtype, Array{Dict{String, NamedTuple}, 1}()),
-            test[:label] => (infected_distribution = infected_distribution, Δ = test[:Δ], δ = test[:δ])
+            test[:label] => (
+                infected_distribution = infected_distribution, 
+                infected_distribution_raw = results[:infected_percentage],
+                Δ = test[:Δ], 
+                δ = test[:δ]
+            )
         )
     end
 end
@@ -229,5 +237,3 @@ for test_type in keys(simulation_data)
     plt.tight_layout()
     savefig("$(output_path)/plot/$(mytitle)")
 end
-
-
