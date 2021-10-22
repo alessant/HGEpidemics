@@ -6,4 +6,5 @@ csv/
 test*
 latex/*
 tmp*
-results*
+NPIs/results*
+NSGA/results*

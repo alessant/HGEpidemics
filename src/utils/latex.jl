@@ -23,7 +23,7 @@ function store_infected_distribution_data(simulation_data; output_path="", quant
             )
         end
 
-        my_title = "$(output_path)/latex-infected-dist.csv"
+        my_title = "$(output_path)/$k-latex-infected-dist.csv"
         println("Latex infected distribution -> saving data in ... $(my_title)")
 
         open(my_title, "w+") do f
@@ -73,7 +73,6 @@ function store_infected_distribution_data_with_quantiles(simulation_data; output
         to_write_array = Dict{Int, Array{Float64, 1}}(i => Array{Float64, 1}() for i in 1:n_intervals)
     
         for elem in exp_data
-            label = elem.first
             data = elem.second.infected_distribution_raw
     
             # interval => [n_infected_iter1...n_infected_itern]
