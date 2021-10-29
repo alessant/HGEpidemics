@@ -48,9 +48,10 @@ df = CSV.read(
     )
 
 df = dropmissing(df)
+rename!(df, [:UTCtime => :timestamp])
 
 # getting the first checkin within the data
-mindate = minimum(df[!, :UTCtime])
+mindate = minimum(df[!, :timestamp])
 # we evaluate the data starting from the midnight of the first monday
 first_mon = floor(Dates.tonext(d -> Dates.dayofweek(d) == Dates.Monday, mindate), Day)
 
@@ -64,7 +65,7 @@ first_mon = floor(Dates.tonext(d -> Dates.dayofweek(d) == Dates.Monday, mindate)
 Δₘ = convert(Dates.Millisecond, Dates.Hour(Δₕ))
 
 # interval_id -> (start_date, end_date)
-intervals = find_intervals(first_mon, maximum(df[!, :UTCtime]), Δₘ)
+intervals = find_intervals(first_mon, maximum(df[!, :timestamp]), Δₘ)
 
 # Count checkin data according to the discrete time intervals
 # evaluated at the previous step
@@ -100,16 +101,19 @@ intervals_δ = find_intervals(most_crowded_week.first, most_crowded_week.second,
 # Evaluate the distribution of the differences (in seconds) between
 # two consecutive check-ins within the same location.
 distr = evaluate_checkins_distribution(intervals_δ, df)
-plt_name = "checkins_distribution_most_crowded_week.png"
+y_label = "Time (s)"
+plt_name = "checkins_distribution_most_crowded_week1.png"
 
 # DIRECT CONTACTS DISTRIBUTION
 # Evaluatin direct contacts distribution within each interval.
 distr = evaluate_direct_contacts_distribution(intervals_δ, df, convert(Dates.Millisecond, Dates.Hour(1)))
+y_label = "Direct contacts"
 plt_name = "direct_contacts_distribution_most_crowded_week.png"
 
 # INDIRECT CONTACTS DISTRIBUTION
 # Evaluating indirect contact distribution (i.e. location distribution)
 distr = evaluate_location_distribution(intervals_δ, df)
+y_label = "Locations"
 plt_name = "location_distribution_most_crowded_week.png"
 
 
@@ -123,8 +127,8 @@ clf()
 fig = plt.figure(figsize=(10, 5))
 ax = fig.add_subplot(111)
 
-ylabel("Time in Seconds", fontweight="semibold")
-xlabel("Time Intervals", fontweight="semibold")
+ylabel(y_label, fontweight="semibold")
+xlabel("Day-Time", fontweight="semibold")
 
 for t=1:length(keys(distr))
     values = get(distr, t, Array{Any, 1}())

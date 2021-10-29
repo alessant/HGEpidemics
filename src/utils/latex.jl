@@ -2,7 +2,12 @@
     Utilities functions to store the output 
     in a format useful to plot data in Latex
 """
-function store_infected_distribution_data(simulation_data; output_path="")
+function store_infected_distribution_data(simulation_data; output_path="", quantiles=false)
+
+    if quantiles
+        store_infected_distribution_data_with_quantiles(simulation_data; output_path)
+        return
+    end
        
     for k in keys(simulation_data)
         to_write = Dict{String, Array{Float64}}() 
@@ -18,7 +23,7 @@ function store_infected_distribution_data(simulation_data; output_path="")
             )
         end
 
-        my_title = "$(output_path)/latex-infected-dist.csv"
+        my_title = "$(output_path)/$k-latex-infected-dist.csv"
         println("Latex infected distribution -> saving data in ... $(my_title)")
 
         open(my_title, "w+") do f
@@ -38,6 +43,72 @@ function store_infected_distribution_data(simulation_data; output_path="")
                 end
             end
         end 
+    end
+end
+
+
+"""
+"""
+function store_infected_distribution_data_with_quantiles(simulation_data; output_path="")
+    my_title = "$(output_path)/latex-infected-dist-quantiles.csv"
+    println("Latex infected distribution quantiles -> saving data in ... $(my_title)")
+
+    for k in keys(simulation_data)
+        to_write = Dict{String, Array{Float64}}() 
+        exp_data = simulation_data[k]
+        n_intervals = length(exp_data[1].second.infected_distribution)
+    
+        # writing the header
+        open(my_title, "w+") do f
+            write(f, "x,")
+    
+            for (index, elem) in enumerate(exp_data)
+                label = elem.first
+                to_write = "$label,$label-25,$label-75"
+                
+                index == length(exp_data) ? write(f, "$to_write\n") : write(f, "$to_write,") 
+            end 
+        end
+    
+        to_write_array = Dict{Int, Array{Float64, 1}}(i => Array{Float64, 1}() for i in 1:n_intervals)
+    
+        for elem in exp_data
+            data = elem.second.infected_distribution_raw
+    
+            # interval => [n_infected_iter1...n_infected_itern]
+            inf_intervals_to_data = Dict{Int, Array{Float64,1}}()
+    
+            for i in 1:n_intervals
+                for iter in 1:length(data)
+                    push!(
+                        get!(inf_intervals_to_data, i, Array{Float64,1}()),
+                        data[iter][i]
+                    )
+                end
+            end
+    
+            for i in 1:length(inf_intervals_to_data)
+                # infected
+                q = quantile(inf_intervals_to_data[i], [0.25, 0.5, 0.75])
+    
+                push!(to_write_array[i], q[2])
+                push!(to_write_array[i], q[1])
+                push!(to_write_array[i], q[3])
+            end
+        end
+    
+        # writing the data
+        open(my_title, "a+") do f
+            for i in 1:n_intervals
+                write(f, "$i,")
+    
+                data_i = to_write_array[i]
+    
+                for (index, elem) in enumerate(data_i)
+                    index == length(data_i) ? write(f, "$elem\n") : write(f, "$elem,")
+                end
+            end
+        end
     end
 end
 
