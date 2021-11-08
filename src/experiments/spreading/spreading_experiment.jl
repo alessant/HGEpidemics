@@ -24,15 +24,13 @@ using Statistics
 ############################
 # Loading simulation params
 ############################
-#TODO as argsparam
-path = "/mnt/e/github/code/HGEpidemics/src/experiments/spreading/BLE/configs/ble_params.json"
+# path = "src/experiments/spreading/BLE/configs/ble_params.json"
+path = ARGS[1] 
 input_data = JSON.parse((open(path, "r")))
 
 output_path = input_data["output_path"]
 fdata_params = input_data["data_params"]
 fparams = input_data["sim_params"]
-
-#project_path = dirname(pathof(HGEpidemics))
 
 jtable = jsontable(read(open(fparams, "r")))
 paramsdf = DataFrame(jtable)
@@ -64,17 +62,6 @@ header = [Symbol(col) for col in data_params.header]
 # values of both Δ and δ.
 intervals = unique(paramsdf, [:Δ, :δ])[!, [:Δ, :δ]]
 intervals_data = Dict{String, Dict{Symbol, Any}}()
-
-# df_ok = CSV.read(
-#     data_params.dataset,
-#     DataFrame;
-#     datarow = 2,
-#     header = header,
-#     dateformat = data_params.dateformat,
-#     limit = 10
-# )
-
-# println(data_params.dataset)
 
 for i in eachrow(intervals)
     df, _intervals, user2vertex, loc2he =
@@ -180,7 +167,11 @@ for testtype in keys(test_data)
 
         push!(
             get!(simulation_data, testtype, Array{Dict{String, NamedTuple}, 1}()),
-            test[:label] => (infected_distribution = infected_distribution, Δ = test[:Δ], δ = test[:δ])
+            test[:label] => (
+                infected_distribution = infected_distribution, 
+                Δ = test[:Δ], 
+                δ = test[:δ]
+            )
         )
     end
 end
@@ -205,8 +196,8 @@ for test_type in keys(simulation_data)
         ylim(bottom=0.0, top=1.0)
         plot(exp.second.infected_distribution, linestyle=linestyles[linestyle], marker=markers[marker], markevery=10, markersize=6.5)
 
-        xlabel("Time intervals", fontweight="semibold", labelpad=10, fontsize="x-large")
-        ylabel("Δ = $(exp.second.Δ) hours \n Infected nodes in %", fontweight="semibold", fontsize="x-large", labelpad=10)
+        xlabel("Simulation steps", fontweight="semibold", labelpad=10, fontsize="x-large")
+        ylabel("Δ = $(exp.second.Δ) hours \n Infected agents", fontweight="semibold", fontsize="x-large", labelpad=10)
         title("δ = $(exp.second.δ) minutes", pad=10, fontweight="semibold", fontsize="x-large")
 
         tick_params(labelsize="large")
